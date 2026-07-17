@@ -2,37 +2,42 @@
 #include "mods/service.hpp"
 #include "mods/svc/hook.h"
 #include "mods/svc/log.h"
+#include "mods/svc/config.h"
 
 // Game includes
-#include "d/d_item_data.h"
 #include "f_op/f_op_actor_mng.h"
+#include "d/d_cc_uty.h"
+#include "d/actor/d_a_player.h"
 
 DEFINE_MOD();
 
 IMPORT_SERVICE(LogService, svc_log);
 IMPORT_SERVICE(HookService, svc_hook);
+IMPORT_SERVICE(ConfigService, svc_config);
 
-// Example game hook: turn heart drops into green rupees.
-DEFINE_HOOK(fopAcM_createItem, CreateItem);
+ConfigVarHandle sword_multiplier = 0;
 
-static HookAction on_create_item_pre(ModContext*, void* args, void*, void*) {
-    int& itemNo = mods::arg_ref<int>(args, 1);
-    if (itemNo == dItemNo_HEART_e) {
-        itemNo = dItemNo_GREEN_RUPEE_e;
-    }
+DEFINE_HOOK(cc_at_check, AttackCheck);
+
+static HookAction on_at_check_pre(ModContext*, void* args, void*, void*) {
+    if (sword_multiplier == 100 || daPy_py_c::checkNowWolf()) return HOOK_CONTINUE;
+
+    auto* atInfo = mods::arg<dCcU_AtInfo*>(args, 0);
+    if (atInfo->mHitType != HIT_TYPE_LINK_NORMAL_ATTACK) return HOOK_CONTINUE;
+
+    atInfo->mAttackPower *= sword_multiplier * 0.01;
     return HOOK_CONTINUE;
 }
 
 extern "C" {
 MOD_EXPORT ModResult mod_initialize(ModError*) {
-    // Installs a pre hook on fopAcM_createItem.
-    ModResult result = mods::hook_add_pre<CreateItem>(svc_hook, on_create_item_pre);
+    ModResult result = mods::hook_add_pre<AttackCheck>(svc_hook, on_at_check_pre);
     if (result != MOD_OK) {
-        svc_log->error(mod_ctx, "failed to install on_create_item_pre");
+        svc_log->error(mod_ctx, "failed to install on_at_check_pre");
         return result;
     }
 
-    svc_log->info(mod_ctx, "my_mod initialized");
+    svc_log->info(mod_ctx, "lazytweaks initialized");
     return MOD_OK;
 }
 
