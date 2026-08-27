@@ -2,6 +2,7 @@
 
 #include "mods/hook.hpp"
 #include "mods/svc/log.h"
+#include "mods/svc/log.hpp"
 #include "mods/service.hpp"
 
 #include "d/actor/d_a_alink.h"
