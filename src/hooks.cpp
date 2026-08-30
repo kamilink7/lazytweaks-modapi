@@ -5,6 +5,7 @@
 #include "mods/service.hpp"
 
 #include "d/actor/d_a_alink.h"
+#include "d/actor/d_a_player.h"
 #include "d/d_com_inf_game.h"
 #include "d/d_meter2.h"
 #include "d/d_meter2_draw.h"
@@ -17,7 +18,10 @@ namespace {
 
 /// Fork equivalent: daAlink_c::checkShieldCrouch()
 bool checkShieldCrouch(daAlink_c* link) {
-    return link->checkShieldGet() && !link->checkAttentionLock() && !link->checkGrabAnime() &&
+    u8 s_getSelectEquipShield = dComIfGs_getSelectEquipShield(); // checkShieldGet() might need this reference?
+
+    // checkShieldGet() is a static member of daPy_py_c, so it needs no instance
+    return daPy_py_c::checkShieldGet() && !link->checkAttentionLock() && !link->checkGrabAnime() &&
            !link->checkUpperReadyThrowAnime() && !link->wallGrabTrigger() &&
            !link->checkFmChainGrabAnime() && mDoCPd_c::getHoldLockR(PAD_1);
 }
