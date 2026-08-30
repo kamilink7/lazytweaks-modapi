@@ -16,12 +16,18 @@
 
 namespace {
 
+/// daPy_py_c::checkShieldGet() is header-inline over dComIfGs_getSelectEquipShield(), which the
+/// game exports on Linux but not in the Windows/macOS/Android link stubs. Reading the save global
+/// directly resolves on every platform: g_dComIfG_gameInfo is DUSK_GAME_EXTERN, and every accessor
+/// below is inline in d_save.h. Body copied from d_com_inf_game.cpp:3091.
+bool checkShieldGet() {
+    return g_dComIfG_gameInfo.info.getPlayer().getPlayerStatusA().getSelectEquip(COLLECT_SHIELD) !=
+           dItemNo_NONE_e;
+}
+
 /// Fork equivalent: daAlink_c::checkShieldCrouch()
 bool checkShieldCrouch(daAlink_c* link) {
-    u8 s_getSelectEquipShield = dComIfGs_getSelectEquipShield(); // checkShieldGet() might need this reference?
-
-    // checkShieldGet() is a static member of daPy_py_c, so it needs no instance
-    return daPy_py_c::checkShieldGet() && !link->checkAttentionLock() && !link->checkGrabAnime() &&
+    return checkShieldGet() && !link->checkAttentionLock() && !link->checkGrabAnime() &&
            !link->checkUpperReadyThrowAnime() && !link->wallGrabTrigger() &&
            !link->checkFmChainGrabAnime() && mDoCPd_c::getHoldLockR(PAD_1);
 }
