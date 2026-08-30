@@ -1,7 +1,7 @@
 {
-  "id": "com.example.my_mod",
-  "name": "My Mod",
+  "id": "com.kamilink.lazytweaks",
+  "name": "Lazy Tweaks",
   "version": "1.0.0",
-  "author": "You",
-  "description": "An example Dusklight mod"
+  "author": "Kamilink",
+  "description": "Lazy Tweaks Mod API v1.0.0 : Just contains shield stuff for now"
 }
