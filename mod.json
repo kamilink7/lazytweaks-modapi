@@ -1,7 +1,7 @@
 {
   "id": "com.kamilink.lazytweaks",
-  "name": "Lazy Tweaks",
+  "name": "Lazy Shield Rework",
   "version": "1.0.0",
   "author": "Kamilink",
-  "description": "Lazy Tweaks Mod API v1.0.0 : Just contains shield stuff for now"
+  "description": "A port of the shield-related features from Lazy Tweaks. Includes manual shielding, crouch shielding, and crouch attacks."
 }
